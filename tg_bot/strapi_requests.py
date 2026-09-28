@@ -81,7 +81,6 @@ def fetch_cart(cart_id, api_token):
     response = requests.get(
         url, headers=headers, params={"populate[fish_items][populate]": "*"}
     )
-    print(response.text)
     response.raise_for_status()
 
     return response.json()["data"]["fish_items"]
