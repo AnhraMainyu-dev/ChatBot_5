@@ -131,3 +131,4 @@ build
 .strapi-cloud.json
 .idea
 media
+__pycache__
