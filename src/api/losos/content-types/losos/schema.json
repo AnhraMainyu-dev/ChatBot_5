@@ -29,6 +29,12 @@
     },
     "Price": {
       "type": "decimal"
+    },
+    "fish_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::fish-item.fish-item",
+      "mappedBy": "ryba"
     }
   }
 }

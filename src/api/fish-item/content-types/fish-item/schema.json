@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "fish_items",
+  "info": {
+    "singularName": "fish-item",
+    "pluralName": "fish-items",
+    "displayName": "Fish-Item"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ryba": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::losos.losos",
+      "inversedBy": "fish_items"
+    },
+    "Kg": {
+      "type": "decimal"
+    }
+  }
+}
