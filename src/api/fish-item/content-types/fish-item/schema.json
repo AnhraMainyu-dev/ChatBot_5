@@ -19,6 +19,12 @@
     },
     "Kg": {
       "type": "decimal"
+    },
+    "cart": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cart.cart",
+      "inversedBy": "fish_items"
     }
   }
 }

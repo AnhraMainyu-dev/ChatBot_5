@@ -11,15 +11,20 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "users_permissions_user": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
-    },
     "fish_items": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::fish-item.fish-item"
+      "target": "api::fish-item.fish-item",
+      "mappedBy": "cart"
+    },
+    "client": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::client.client",
+      "mappedBy": "cart"
+    },
+    "tg_id": {
+      "type": "biginteger"
     }
   }
 }

@@ -1,14 +1,16 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
-from tg_bot.strapi_requests import fetch_singular_item, fetch_content_type
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 BACK_BUTTON = InlineKeyboardButton("Назад", callback_data="back")
 
+
 def menu_keyboard(menu):
     keyboard = [
-        [InlineKeyboardButton(item['name'], callback_data=f"id_{item['id']}")]
+        [InlineKeyboardButton(item["Name"], callback_data=f"id_{item['documentId']}")]
         for item in menu
     ]
-    show_cart_button = InlineKeyboardButton('Показать корзину', callback_data="show_cart")
+    show_cart_button = InlineKeyboardButton(
+        "Показать корзину", callback_data="show_cart"
+    )
     keyboard.append([show_cart_button])
 
     return InlineKeyboardMarkup(keyboard)
@@ -17,18 +19,31 @@ def menu_keyboard(menu):
 def add_to_cart_keyboard(item_id):
     return InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("Добавить в корзину", callback_data=f"add_id_{item_id}")],
-            BACK_BUTTON
+            [
+                InlineKeyboardButton(
+                    "Добавить в корзину", callback_data=f"add_id_{item_id}"
+                )
+            ],
+            [BACK_BUTTON],
         ]
     )
 
+
 def cart_keyboard(cart):
-    return InlineKeyboardMarkup(
+    keyboard = [
         [
-            [
-                InlineKeyboardButton(item['name'], callback_data=f'cart_item_id{item['id']}'),
-                InlineKeyboardButton('Убрать из корзины', callback_data=f'delete_cart_item_id_{item['id']}'),
-            ]
-            for item in cart
+            InlineKeyboardButton(
+                item["ryba"]["Name"], callback_data=f"id_{item['ryba']['documentId']}"
+            ),
+            InlineKeyboardButton(
+                "Убрать из корзины",
+                callback_data=f"delete_cart_item_id_{item['documentId']}",
+            ),
         ]
-    )
+        for item in cart
+    ]
+    finish_order_button = InlineKeyboardButton("Оплатить", callback_data="finish_order")
+    keyboard.append([finish_order_button])
+    keyboard.append([BACK_BUTTON])
+
+    return InlineKeyboardMarkup(keyboard)
