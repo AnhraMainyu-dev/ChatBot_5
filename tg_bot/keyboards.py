@@ -33,7 +33,7 @@ def cart_keyboard(cart):
     keyboard = [
         [
             InlineKeyboardButton(
-                item["ryba"]["Name"], callback_data=f"id_{item['ryba']['documentId']}"
+                item["fish"]["Name"], callback_data=f"id_{item['fish']['documentId']}"
             ),
             InlineKeyboardButton(
                 "Убрать из корзины",

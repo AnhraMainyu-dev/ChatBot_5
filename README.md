@@ -17,16 +17,14 @@ Python 3.12 или новее должен быть уже установлен.
 pip install -r requirements.txt
 ```
 
-Для работы бота нужен Strapi (требуется Node.js). 
-В папке `my-strapi-project` скопируйте `.env.example` в `.env` и замените значения `tobemodified` на любые случайные строки. 
-Затем установите зависимости и запустите Strapi из этой же папки:
+Для работы бота нужен запущенный [Strapi](https://strapi.io/) версии 5. Его адрес указывается в переменной `STRAPI_URL`.
 
-```sh
-npm install
-npm run develop
-```
+В Strapi должны быть созданы коллекции:
 
-В админке Strapi, расположенной по адресу `http://localhost:1337/admin`, создайте API-токен.
+- **Fish**: `Name` - текст, `Description` - текст, `Picture` - медиафайл.
+- **Cart**: `tg_id` - текст, `fish_items` - связь с Fish_item, `client` - связь с Client.
+- **Fish_item**: `fish` - связь с Fish, `cart` - связь с Cart.
+- **Client**: `Email` - текст, `Name` - текст, `cart` - связь с Cart.
 
 Также нужен Redis для хранения состояния пользователей. Сервис доступен для Linux или виртуальной машины WSL, устанавливается командами:
 
@@ -42,17 +40,12 @@ API-ключ бота в телеграме можно получить у [@Bot
 TG_API_KEY=[API] 
 STRAPI_API=[API] 
 STRAPI_URL=http://localhost:1337
-REDIS_HOST=localhost
-REDIS_PORT=6379
 ```
 Переменные окружения представляют собою:
 
 - TG_API_KEY - API ключ для обращения к боту в Телеграме.
 - STRAPI_API - API ключ для запросов к Strapi.
 - STRAPI_URL - адрес, по которому будет запущен Strapi
-- REDIS_HOST - адрес сервера Redis.
-- REDIS_PORT - порт сервера Redis (6379 стандартный).
-
 
 ### Как использовать
 

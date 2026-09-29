@@ -13,6 +13,8 @@ def main():
     app = Application.builder().token(config("TG_API_KEY")).build()
     db = redis.Redis(host="localhost", port=6379, decode_responses=True)
     app.bot_data["db"] = db
+    app.bot_data['strapi_url'] = config('STRAPI_URL')
+    app.bot_data['strapi_api'] = config('STRAPI_API')
 
     order_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],

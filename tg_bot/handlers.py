@@ -1,13 +1,23 @@
-from decouple import config
 from telegram import InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
-from tg_bot.keyboards import (BACK_BUTTON, add_to_cart_keyboard, cart_keyboard,
-                              menu_keyboard)
-from tg_bot.strapi_requests import (add_to_cart, create_cart, delete_from_cart,
-                                    fetch_cart, fetch_cart_id,
-                                    fetch_content_type, fetch_picture,
-                                    fetch_singular_item, send_order)
+from tg_bot.keyboards import (
+    BACK_BUTTON,
+    add_to_cart_keyboard,
+    cart_keyboard,
+    menu_keyboard,
+)
+from tg_bot.strapi_requests import (
+    add_to_cart,
+    create_cart,
+    delete_from_cart,
+    fetch_cart,
+    fetch_cart_id,
+    fetch_content_type,
+    fetch_picture,
+    fetch_singular_item,
+    send_order,
+)
 
 WAIT_ITEM = "Searching menu"
 WAIT_DESCRIPTION = "Reading description"
@@ -22,13 +32,20 @@ def save_state(update, context, state):
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    menu = fetch_content_type("lososes", config("STRAPI_API"))
+
+    menu = fetch_content_type(
+        "fishes", context.bot_data["strapi_url"], context.bot_data["strapi_api"]
+    )
 
     if "cart_id" not in context.user_data:
         tg_id = update.effective_user.id
-        cart_id = fetch_cart_id(tg_id, config("STRAPI_API"))
+        cart_id = fetch_cart_id(
+            tg_id, context.bot_data["strapi_url"], context.bot_data["strapi_api"]
+        )
         if cart_id is None:
-            cart_id = create_cart(tg_id, config("STRAPI_API"))
+            cart_id = create_cart(
+                tg_id, context.bot_data["strapi_url"], context.bot_data["strapi_api"]
+            )
         context.user_data["cart_id"] = cart_id
 
     await update.effective_message.reply_text(
@@ -44,8 +61,13 @@ async def handle_description(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.message.delete()
 
     item_id = query.data.removeprefix("id_")
-    item = fetch_singular_item("lososes", item_id, config("STRAPI_API"))
-    item_image = fetch_picture(item)
+    item = fetch_singular_item(
+        "fishes",
+        item_id,
+        context.bot_data["strapi_url"],
+        context.bot_data["strapi_api"],
+    )
+    item_image = fetch_picture(item, context.bot_data["strapi_url"])
 
     await update.effective_message.reply_photo(
         photo=item_image,
@@ -63,7 +85,8 @@ async def handle_add_to_cart(update: Update, context: ContextTypes.DEFAULT_TYPE)
         update.effective_user.id,
         context.user_data["cart_id"],
         item_id,
-        config("STRAPI_API"),
+        context.bot_data["strapi_url"],
+        context.bot_data["strapi_api"],
     )
     await query.answer("Добавлено!")
 
@@ -73,7 +96,11 @@ async def handle_add_to_cart(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def handle_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    cart = fetch_cart(context.user_data["cart_id"], config("STRAPI_API"))
+    cart = fetch_cart(
+        context.user_data["cart_id"],
+        context.bot_data["strapi_url"],
+        context.bot_data["strapi_api"],
+    )
     await query.edit_message_text("Товары в корзине:", reply_markup=cart_keyboard(cart))
 
     return save_state(update, context, SHOW_CART)
@@ -81,7 +108,9 @@ async def handle_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_delete_item(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cart_item_id = update.callback_query.data.removeprefix("delete_cart_item_id_")
-    delete_from_cart(cart_item_id, config("STRAPI_API"))
+    delete_from_cart(
+        cart_item_id, context.bot_data["strapi_url"], context.bot_data["strapi_api"]
+    )
 
     return await handle_cart(update, context)
 
@@ -104,7 +133,8 @@ async def finish_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
         email,
         update.effective_user.full_name,
         context.user_data["cart_id"],
-        config("STRAPI_API"),
+        context.bot_data["strapi_url"],
+        context.bot_data["strapi_api"],
     )
     context.user_data.pop("cart_id", None)
 

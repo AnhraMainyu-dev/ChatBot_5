@@ -1,30 +1,30 @@
 import requests
 
 
-def fetch_singular_item(content_type, document_id, api_token):
-    url = f"http://localhost:1337/api/{content_type}/{document_id}"
+def fetch_singular_item(content_type, document_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/{content_type}/{document_id}"
     headers = {"Authorization": f'Bearer {api_token}'}
     response = requests.get(url, headers=headers, params={"populate": "*"})
     response.raise_for_status()
     return response.json()["data"]
 
 
-def fetch_content_type(content_type, api_token):
-    url = f"http://localhost:1337/api/{content_type}"
+def fetch_content_type(content_type, strapi_url, api_token):
+    url = f"{strapi_url}/api/{content_type}"
     headers = {"Authorization": f'Bearer {api_token}'}
     response = requests.get(url, headers=headers, params={"populate": "*"})
     response.raise_for_status()
     return response.json()["data"]
 
 
-def fetch_picture(item):
-    response = requests.get(f"http://localhost:1337{item['Picture']['url']}")
+def fetch_picture(item, strapi_url):
+    response = requests.get(f"{strapi_url}{item['Picture']['url']}")
     response.raise_for_status()
     return response.content
 
 
-def fetch_cart_id(tg_id, api_token):
-    url = "http://localhost:1337/api/carts"
+def fetch_cart_id(tg_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/carts"
     headers = {"Authorization": f'Bearer {api_token}'}
     response = requests.get(
         url,
@@ -42,8 +42,8 @@ def fetch_cart_id(tg_id, api_token):
     return carts[0]["documentId"]
 
 
-def create_cart(tg_id, api_token):
-    url = "http://localhost:1337/api/carts"
+def create_cart(tg_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/carts"
     headers = {"Authorization": f'Bearer {api_token}'}
     payload = {
         "data": {
@@ -55,12 +55,12 @@ def create_cart(tg_id, api_token):
     return response.json()["data"]["documentId"]
 
 
-def add_to_cart(tg_id, cart_id, item_id, api_token):
-    url = "http://localhost:1337/api/fish-items"
+def add_to_cart(tg_id, cart_id, item_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/fish-items"
     headers = {"Authorization": f'Bearer {api_token}'}
     payload = {
         "data": {
-            "ryba": item_id,
+            "fish": item_id,
             "cart": cart_id,
         }
     }
@@ -68,15 +68,15 @@ def add_to_cart(tg_id, cart_id, item_id, api_token):
     response.raise_for_status()
 
 
-def delete_from_cart(cart_item_id, api_token):
-    url = f"http://localhost:1337/api/fish-items/{cart_item_id}"
+def delete_from_cart(cart_item_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/fish-items/{cart_item_id}"
     headers = {"Authorization": f'Bearer {api_token}'}
     response = requests.delete(url, headers=headers)
     response.raise_for_status()
 
 
-def fetch_cart(cart_id, api_token):
-    url = f"http://localhost:1337/api/carts/{cart_id}"
+def fetch_cart(cart_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/carts/{cart_id}"
     headers = {"Authorization": f'Bearer {api_token}'}
     response = requests.get(
         url, headers=headers, params={"populate[fish_items][populate]": "*"}
@@ -86,8 +86,8 @@ def fetch_cart(cart_id, api_token):
     return response.json()["data"]["fish_items"]
 
 
-def send_order(email, tg_name, cart_id, api_token):
-    url = "http://localhost:1337/api/clients"
+def send_order(email, tg_name, cart_id, strapi_url, api_token):
+    url = f"{strapi_url}/api/clients"
     headers = {
         "Authorization": f'Bearer {api_token}',
         "Content-Type": "application/json",
